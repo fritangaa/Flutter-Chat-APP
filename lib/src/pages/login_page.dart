@@ -1,8 +1,11 @@
+import 'package:chat/src/helpers/mostrar_alerta.dart';
+import 'package:chat/src/services/auth_service.dart';
 import 'package:chat/src/widgets/custom_boton_azul.dart';
 import 'package:chat/src/widgets/custom_input.dart';
 import 'package:chat/src/widgets/custom_header_logo.dart';
 import 'package:chat/src/widgets/custom_leabels.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 class LoginPage extends StatelessWidget {
   @override
@@ -50,6 +53,8 @@ class __FormState extends State<_Form> {
   final passwordController = TextEditingController();
   @override
   Widget build(BuildContext context) {
+    final authService = Provider.of<AuthService>(context);
+
     return Container(
       margin: EdgeInsets.only(top: 30),
       padding: EdgeInsets.symmetric(horizontal: 50),
@@ -69,10 +74,24 @@ class __FormState extends State<_Form> {
           ),
           BotonAzul(
             texto: "Ingrese",
-            onPressed: () {
-              print(emailController.text);
-              print(passwordController.text);
-            },
+            onPressed: authService.autenticando
+                ? null
+                : () async {
+                    FocusScope.of(context).unfocus();
+
+                    final loginOk = await authService.login(
+                        emailController.text.trim(),
+                        passwordController.text.trim());
+
+                    if (loginOk) {
+                      //navegar
+                      Navigator.pushReplacementNamed(context, "usuarios");
+                    } else {
+                      //alerta
+                      mostrarAlerta(
+                          context, "Login incorrecto", "Revise credenciales");
+                    }
+                  },
           )
         ],
       ),
