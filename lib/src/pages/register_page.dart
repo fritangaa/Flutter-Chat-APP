@@ -1,5 +1,6 @@
 import 'package:chat/src/helpers/mostrar_alerta.dart';
 import 'package:chat/src/services/auth_service.dart';
+import 'package:chat/src/services/socket_service.dart';
 import 'package:chat/src/widgets/custom_boton_azul.dart';
 import 'package:chat/src/widgets/custom_input.dart';
 import 'package:chat/src/widgets/custom_header_logo.dart';
@@ -56,6 +57,7 @@ class __FormState extends State<_Form> {
   @override
   Widget build(BuildContext context) {
     final authService = Provider.of<AuthService>(context);
+    final socketService = Provider.of<SocketService>(context);
     return Container(
       margin: EdgeInsets.only(top: 30),
       padding: EdgeInsets.symmetric(horizontal: 50),
@@ -93,6 +95,7 @@ class __FormState extends State<_Form> {
 
                     if (registroOk == true) {
                       //navegar
+                      socketService.connect();
                       Navigator.pushReplacementNamed(context, "usuarios");
                     } else {
                       //alerta
